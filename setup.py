@@ -35,6 +35,7 @@ tests_require = [
     "matplotlib",
     "memory_profiler",
     "psutil",
+    "ipdb",
 ]
 
 
