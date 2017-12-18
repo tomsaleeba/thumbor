@@ -10,6 +10,7 @@ profile: compile_ext
 setup:
     ifeq ("$(OS)", "Darwin")
 	    @$(MAKE) setup_mac
+	@env "CFLAGS=-I/usr/local/include -L/usr/local/lib" pip install -e .[tests]
     else
 	    @echo
 	    @echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
@@ -17,14 +18,14 @@ setup:
 	    @echo ">>> imagemagick webp opencv coreutils gifsicle libvpx exiftool cairo ffmpeg <<<"
 	    @echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	    @echo
-    endif
 	@pip install -e .[tests]
+    endif
 
 setup_mac:
 	@brew tap homebrew/science
 	@brew update
 	@brew install ffmpeg --with-libvpx
-	@brew install imagemagick webp opencv coreutils gifsicle libvpx exiftool cairo libmagic
+	@brew install imagemagick webp opencv coreutils gifsicle libvpx exiftool cairo libmagic gmp
 	@opencv_path=`realpath $$(dirname $$(brew --prefix opencv))/$$(readlink $$(brew --prefix opencv))`; \
 		echo 'Enter in your site-packages directory and run the following lines:';\
 		echo "ln -s $$opencv_path/lib/python2.7/site-packages/cv.py ./";\
