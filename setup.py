@@ -36,6 +36,10 @@ tests_require = [
     "memory_profiler",
     "psutil",
     "ipdb",
+    "yapf",
+    "isort",
+    "mypy",
+    "pylint",
 ]
 
 
