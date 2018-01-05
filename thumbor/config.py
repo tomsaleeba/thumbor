@@ -358,6 +358,9 @@ Config.define('REDIS_QUEUE_SERVER_PORT', 6379, 'Server port for the queued redis
 Config.define('REDIS_QUEUE_SERVER_DB', 0, 'Server database index for the queued redis detector', 'Queued Redis Detector')
 Config.define('REDIS_QUEUE_SERVER_PASSWORD', None, 'Server password for the queued redis detector', 'Queued Redis Detector')
 
+# EVENT NOTIFICATION REDIS OPTIONS
+Config.define('REDIS_PUBSUB_CHANNEL_NAME', 'thumbor_uploads', 'Channel name for the pub/sub event feed on Redis', 'Event Notification Redis')
+
 # QUEUED DETECTOR SQS OPTIONS
 Config.define('SQS_QUEUE_KEY_ID', None, 'AWS key id', 'Queued SQS Detector')
 Config.define('SQS_QUEUE_KEY_SECRET', None, 'AWS key secret', 'Queued SQS Detector')

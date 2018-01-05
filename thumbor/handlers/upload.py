@@ -10,10 +10,13 @@
 
 import uuid
 import mimetypes
+import logging
 
 from thumbor.handlers import ImageApiHandler
 from thumbor.engines import BaseEngine
+from redis import Redis
 
+logger = logging.getLogger('thumbor')
 
 ##
 # Handler to upload images.
@@ -56,7 +59,26 @@ class ImageUploadHandler(ImageApiHandler):
             image_id = str(uuid.uuid4().hex)
             self.write_file(image_id, body)
             self.set_status(201)
-            self.set_header('Location', self.location(image_id, filename))
+            location_header_value = self.location(image_id, filename)
+            self.set_header('Location', location_header_value)
+            self.send_event(location_header_value)
+
+    def send_event(self, location_header_value):
+        method = u'POST' # TODO support PUT and DELETE
+        # TODO ensure Redis client uses a connection pool that survives network issues
+        try:
+            redis = Redis(host=self.context.config.REDIS_QUEUE_SERVER_HOST,
+                              port=self.context.config.REDIS_QUEUE_SERVER_PORT,
+                              db=self.context.config.REDIS_QUEUE_SERVER_DB,
+                              password=self.context.config.REDIS_QUEUE_SERVER_PASSWORD)
+            msg = {
+                'method': method,
+                'location': location_header_value
+            }
+            redis.publish(self.context.config.REDIS_PUBSUB_CHANNEL_NAME, msg)
+            logger.debug('Published event to Redis: %s' % str(msg))
+        except Exception:
+            logger.exception('Failed to publish event to Redis, continuing processing')
 
     def multipart_form_data(self):
         if 'media' not in self.request.files or not self.request.files['media']:
