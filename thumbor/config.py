@@ -10,6 +10,7 @@
 
 from os.path import expanduser, join
 import tempfile
+import logging
 
 import derpconf.config as config
 from derpconf.config import Config
@@ -357,6 +358,13 @@ Config.define('REDIS_QUEUE_SERVER_HOST', 'localhost', 'Server host for the queue
 Config.define('REDIS_QUEUE_SERVER_PORT', 6379, 'Server port for the queued redis detector', 'Queued Redis Detector')
 Config.define('REDIS_QUEUE_SERVER_DB', 0, 'Server database index for the queued redis detector', 'Queued Redis Detector')
 Config.define('REDIS_QUEUE_SERVER_PASSWORD', None, 'Server password for the queued redis detector', 'Queued Redis Detector')
+
+# RABBIT MQ OPTIONS
+Config.define('RABBIT_MQ_SERVER_HOST', 'localhost', 'Server host for the RabbitMQ event bus', 'RabbitMQ Event Bus')
+Config.define('RABBIT_MQ_SERVER_PORT', 5672, 'Server port for the RabbitMQ event bus', 'RabbitMQ Event Bus')
+Config.define('RABBIT_MQ_EXCHANGE_TYPE', u'fanout', 'Exchange type for the RabbitMQ event bus', 'RabbitMQ Event Bus')
+Config.define('RABBIT_MQ_EXCHANGE_NAME', u'thumbor_exchange', 'Exchange name for the RabbitMQ event bus', 'RabbitMQ Event Bus')
+Config.define('RABBIT_MQ_PIKA_LOG_LEVEL', logging.ERROR, 'Logging level for the Pika client for RabbitMQ', 'RabbitMQ Event Bus')
 
 # QUEUED DETECTOR SQS OPTIONS
 Config.define('SQS_QUEUE_KEY_ID', None, 'AWS key id', 'Queued SQS Detector')

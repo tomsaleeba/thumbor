@@ -61,6 +61,8 @@ def configure_log(config, log_level):
             format=config.THUMBOR_LOG_FORMAT,
             datefmt=config.THUMBOR_LOG_DATE_FORMAT
         )
+    logging.getLogger('thumbor').debug('Note: pika library log level is controlled separately via the "RABBIT_MQ_PIKA_LOG_LEVEL" config parameter')
+    logging.getLogger('pika').setLevel(config.RABBIT_MQ_PIKA_LOG_LEVEL)
 
 
 def get_importer(config):
