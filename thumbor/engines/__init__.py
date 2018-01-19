@@ -101,21 +101,21 @@ class BaseEngine(object):
 
     @classmethod
     def get_mimetype(cls, buffer):
-        if buffer.startswith('GIF8'):
+        if buffer.startswith(b'GIF8'):
             return 'image/gif'
-        elif buffer.startswith('\x89PNG\r\n\x1a\n'):
+        elif buffer.startswith(b'\x89PNG\r\n\x1a\n'):
             return 'image/png'
-        elif buffer.startswith('\xff\xd8'):
+        elif buffer.startswith(b'\xff\xd8'):
             return 'image/jpeg'
-        elif buffer.startswith('WEBP', 8):
+        elif buffer.startswith(b'WEBP', 8):
             return 'image/webp'
-        elif buffer.startswith('\x00\x00\x00\x0c'):
+        elif buffer.startswith(b'\x00\x00\x00\x0c'):
             return 'image/jp2'
-        elif buffer.startswith('\x00\x00\x00 ftyp'):
+        elif buffer.startswith(b'\x00\x00\x00 ftyp'):
             return 'video/mp4'
-        elif buffer.startswith('\x1aE\xdf\xa3'):
+        elif buffer.startswith(b'\x1aE\xdf\xa3'):
             return 'video/webm'
-        elif buffer.startswith('\x49\x49\x2A\x00') or buffer.startswith('\x4D\x4D\x00\x2A'):
+        elif buffer.startswith(b'\x49\x49\x2A\x00') or buffer.startswith(b'\x4D\x4D\x00\x2A'):
             return 'image/tiff'
         elif SVG_RE.search(buffer[:2048].replace(b'\0', '')):
             return 'image/svg+xml'

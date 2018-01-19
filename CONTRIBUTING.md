@@ -19,7 +19,7 @@ First step is to fork it at http://help.github.com/fork-a-repo/ and create your 
 
 There are a few things you'll need in order to properly start hacking on it.
 
-You'll need Python 2.7 and we seriously advise you to use virtualenv (http://pypi.python.org/pypi/virtualenv) since it will keep your environment clean of thumbor's dependencies and you can choose when to "turn them on".
+You'll need Python 3.6 and we seriously advise you to use virtualenv (http://pypi.python.org/pypi/virtualenv) since it will keep your environment clean of thumbor's dependencies and you can choose when to "turn them on".
 
 The following packages are required:
 
@@ -32,6 +32,12 @@ The following packages are required:
 * argparse
 
 You'll also need a recent version of OpenCV (http://opencv.willowgarage.com/wiki/) installed. When installing OpenCV, it will create a python binding. Make sure this binding is visible to your current virtualenv (if you are using it).
+
+You can install all the required dependencies with
+
+    # comment the imports in thumbor/__init__.py
+    make setup
+    # uncomment the imports in thumbor/__init__.py
 
 Other than that, you'll also need a mongo database running, as well as a redis database running. Both are trivial to setup at modern linux or mac os systems.
 

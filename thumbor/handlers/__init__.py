@@ -174,7 +174,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
             self.log_exception(*sys.exc_info())
 
-            if 'cannot identify image file' in e.message:
+            if hasattr(e, 'message') and 'cannot identify image file' in e.message:
                 logger.warning(msg)
                 self._error(400)
             else:
@@ -631,11 +631,13 @@ class BaseHandler(tornado.web.RequestHandler):
                 storage.put(url, fetch_result.buffer)
 
             storage.put_crypto(url)
-        except Exception:
+            print('end ' + str(fetch_result.successful))
+        except Exception as e:
             fetch_result.successful = False
+            raise e
         finally:
             if not fetch_result.successful:
-                raise
+                raise # FIXME raise what? This gives: "RuntimeError: No active exception to reraise"
             fetch_result.buffer = None
             fetch_result.engine = self.context.request.engine
             raise gen.Return(fetch_result)

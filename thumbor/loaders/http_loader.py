@@ -28,7 +28,7 @@ def encode_url(url):
 
 
 def quote_url(url):
-    return encode_url(unquote(url).decode('utf-8'))
+    return encode_url(unquote(url))
 
 
 def _normalize_url(url):
