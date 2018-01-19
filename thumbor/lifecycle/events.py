@@ -33,11 +33,17 @@ from blinker import signal as sync_signal
 from blinker.base import NamedSignal
 from asyncblink import signal, NamedAsyncSignal
 
-def scheduler(future):
-    '''thumbor scheduler function. Use it in blinker.'''
-    loop = ioloop.IOLoop.instance()
-    loop.add_future(future, lambda f: f)
-    return future
+def async_signal(name):
+    result = signal(name)
+
+    def scheduler(future):
+        '''thumbor scheduler function. Use it in blinker.'''
+        loop = ioloop.IOLoop.instance()
+        loop.add_future(future, lambda f: f)
+        return future
+
+    result.scheduler = scheduler
+    return result
 
 class Events(object):
     '''Thumbor's request lifecycle events'''
@@ -79,65 +85,60 @@ class Events(object):
 
     class Imaging(object):  # pylint: disable=too-few-public-methods
         'Imaging events - happen when transforming the image'
-        before_finish_request = signal('imaging.before_finish_request')
-        before_finish_request.scheduler=scheduler
-        after_finish_request = signal('imaging.after_finish_request')
-        after_finish_request.scheduler=scheduler
+        before_finish_request = async_signal('imaging.before_finish_request')
+        after_finish_request = async_signal('imaging.after_finish_request')
 
         # Event executed before processing anything else
-        request_received = signal('imaging.received')
-        request_received.scheduler=scheduler
+        request_received = async_signal('imaging.received')
 
         # Parsing Arguments Events
-        before_parsing_arguments = signal('imaging.before_parsing_arguments')
-        before_parsing_arguments.scheduler=scheduler
-        after_parsing_arguments = signal('imaging.after_parsing_arguments')
-        after_parsing_arguments.scheduler=scheduler
+        before_parsing_arguments = async_signal('imaging.before_parsing_arguments')
+        after_parsing_arguments = async_signal('imaging.after_parsing_arguments')
 
         # Source Image loading events
-        before_loading_source_image = signal(
-            'imaging.before_loading_source_image')#, scheduler=scheduler)
-        load_source_image = signal('imaging.loading_source_image')#, scheduler=scheduler)
-        after_loading_source_image = signal(
-            'imaging.after_loading_source_image')#, scheduler=scheduler)
-        source_image_not_found = signal('imaging.source_image_not_found')#, scheduler=scheduler)
-        source_image_already_loaded = signal(
-            'imaging.source_image_already_loaded')#, scheduler=scheduler)
+        before_loading_source_image = async_signal(
+            'imaging.before_loading_source_image')
+        load_source_image = async_signal('imaging.loading_source_image')
+        after_loading_source_image = async_signal(
+            'imaging.after_loading_source_image')
+        source_image_not_found = async_signal('imaging.source_image_not_found')
+        source_image_already_loaded = async_signal(
+            'imaging.source_image_already_loaded')
 
         # Image transformation events
-        before_transforming_image = signal('imaging.before_transforming_image')#, scheduler=scheduler)
-        after_transforming_image = signal('imaging.after_transforming_image')#, scheduler=scheduler)
+        before_transforming_image = async_signal('imaging.before_transforming_image')
+        after_transforming_image = async_signal('imaging.after_transforming_image')
 
     class Engine(object):  # pylint: disable=too-few-public-methods
         'Engine methods events'
-        before_read_image = signal('engine.before_read_image')#, scheduler=scheduler)
-        read_image = signal('engine.read_image')#, scheduler=scheduler)
-        after_read_image = signal('engine.after_read_image')#, scheduler=scheduler)
+        before_read_image = async_signal('engine.before_read_image')
+        read_image = async_signal('engine.read_image')
+        after_read_image = async_signal('engine.after_read_image')
 
-        before_resize = signal('engine.before_resize')#, scheduler=scheduler)
-        resize = signal('engine.resize')#, scheduler=scheduler)
-        after_resize = signal('engine.after_resize')#, scheduler=scheduler)
+        before_resize = async_signal('engine.before_resize')
+        resize = async_signal('engine.resize')
+        after_resize = async_signal('engine.after_resize')
 
-        before_crop = signal('engine.before_crop')#, scheduler=scheduler)
-        crop = signal('engine.crop')#, scheduler=scheduler)
-        after_crop = signal('engine.after_crop')#, scheduler=scheduler)
+        before_crop = async_signal('engine.before_crop')
+        crop = async_signal('engine.crop')
+        after_crop = async_signal('engine.after_crop')
 
-        before_reorientate = signal('engine.before_reorientate')#, scheduler=scheduler)
-        reorientate = signal('engine.reorientate')#, scheduler=scheduler)
-        after_reorientate = signal('engine.after_reorientate')#, scheduler=scheduler)
+        before_reorientate = async_signal('engine.before_reorientate')
+        reorientate = async_signal('engine.reorientate')
+        after_reorientate = async_signal('engine.after_reorientate')
 
-        before_serialize = signal('engine.before_serialize')#, scheduler=scheduler)
-        serialize = signal('engine.serialize')#, scheduler=scheduler)
-        after_serialize = signal('engine.after_serialize')#, scheduler=scheduler)
+        before_serialize = async_signal('engine.before_serialize')
+        serialize = async_signal('engine.serialize')
+        after_serialize = async_signal('engine.after_serialize')
 
-        get_image_data_as_rgb = signal('engine.get_image_data_as_rgb')#, scheduler=scheduler)
-        get_image_size = signal('engine.get_image_size')#, scheduler=scheduler)
+        get_image_data_as_rgb = async_signal('engine.get_image_data_as_rgb')
+        get_image_size = async_signal('engine.get_image_size')
 
     class Healthcheck(object):  # pylint: disable=too-few-public-methods
         'Healthcheck events'
-        before_healthcheck = signal('healthcheck.before_healthcheck')#, scheduler=scheduler)
-        healthcheck = signal('healthcheck.execute')#, scheduler=scheduler)
-        after_healthcheck = signal('healthcheck.after_healthcheck')#, scheduler=scheduler)
+        before_healthcheck = async_signal('healthcheck.before_healthcheck')
+        healthcheck = async_signal('healthcheck.execute')
+        after_healthcheck = async_signal('healthcheck.after_healthcheck')
 
     def __init__(self):
         raise RuntimeError('Events class should not be instantiated.')
@@ -146,7 +147,7 @@ class Events(object):
     def get(cls, name):
         '''Returns an event by name'''
         if 'server' not in name:
-            return signal(name)#, scheduler=scheduler)
+            return async_signal(name)
         return sync_signal(name)
 
     @classmethod
