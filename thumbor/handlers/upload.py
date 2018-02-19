@@ -13,6 +13,7 @@ import mimetypes
 
 from thumbor.handlers import ImageApiHandler
 from thumbor.engines import BaseEngine
+from thumbor.lifecycle import Events
 
 
 ##
@@ -24,6 +25,7 @@ from thumbor.engines import BaseEngine
 class ImageUploadHandler(ImageApiHandler):
 
     def post(self):
+        Events.trigger(Events.Imaging.before_upload_image, None)
         # Check if the image uploaded is a multipart/form-data
         if self.multipart_form_data():
             file_data = self.request.files['media'][0]
@@ -57,6 +59,7 @@ class ImageUploadHandler(ImageApiHandler):
             self.write_file(image_id, body)
             self.set_status(201)
             self.set_header('Location', self.location(image_id, filename))
+        Events.trigger(Events.Imaging.after_upload_image, None)
 
     def multipart_form_data(self):
         if 'media' not in self.request.files or not self.request.files['media']:

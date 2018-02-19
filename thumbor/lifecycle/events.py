@@ -112,6 +112,10 @@ class Events(object):
         before_transforming_image = async_signal('imaging.before_transforming_image')
         after_transforming_image = async_signal('imaging.after_transforming_image')
 
+        # Image upload events
+        before_upload_image = async_signal('imaging.before_upload_image')
+        after_upload_image = async_signal('imaging.after_upload_image')
+
     class Engine(object):  # pylint: disable=too-few-public-methods
         'Engine methods events'
         before_read_image = async_signal('engine.before_read_image')
