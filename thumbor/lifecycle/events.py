@@ -27,6 +27,8 @@ Example:
     Events.subscribe(Events.Imaging.request_received, on_request_received_handler)
 '''
 
+import inspect
+
 import tornado.gen
 from tornado import ioloop
 from blinker import signal as sync_signal
@@ -49,7 +51,6 @@ def async_signal(name):
 
 class Events(object):
     '''Thumbor's request lifecycle events'''
-
 
     class Server(object):  # pylint: disable=too-few-public-methods
         'Server events'
@@ -132,6 +133,10 @@ class Events(object):
         before_serialize = async_signal('engine.before_serialize')
         serialize = async_signal('engine.serialize')
         after_serialize = async_signal('engine.after_serialize')
+
+        before_focal_points_changed = signal('engine.before_focal_points_changed')
+        focal_points_changed = signal('engine.focal_points_changed')
+        after_focal_points_changed = signal('engine.after_focal_points_changed')
 
         get_image_data_as_rgb = async_signal('engine.get_image_data_as_rgb')
         get_image_size = async_signal('engine.get_image_size')
