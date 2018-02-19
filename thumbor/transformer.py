@@ -14,6 +14,7 @@ import sys
 from thumbor.point import FocalPoint
 from thumbor.utils import logger
 import tornado.gen as gen
+from thumbor.lifecycle import Events
 
 trim_enabled = True
 try:
@@ -306,6 +307,7 @@ class Transformer(object):
         return x, y
 
     def resize(self):
+        Events.trigger(Events.Engine.resize, None)
         source_width, source_height = self.engine.size
         if self.target_width == source_width and self.target_height == source_height:
             return

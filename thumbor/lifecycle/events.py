@@ -33,6 +33,8 @@ from blinker import signal as sync_signal
 from blinker.base import NamedSignal
 from asyncblink import signal, NamedAsyncSignal
 
+from thumbor.utils import logger
+
 def async_signal(name):
     result = signal(name)
 
@@ -153,6 +155,7 @@ class Events(object):
     @classmethod
     def trigger_sync(cls, event, sender, **kw):
         'Triggers a synchronous event'
+        logger.debug('trigger synchronous ' + str(event))
         if not isinstance(event, NamedSignal):
             raise RuntimeError(
                 'Async signals can\'t be triggered synchronously: %s.' %
@@ -163,6 +166,7 @@ class Events(object):
     @tornado.gen.coroutine
     def trigger(cls, event, sender, **kw):
         'Triggers an asynchronous event'
+        logger.debug('trigger asynchronous ' + str(event))
         if not isinstance(event, NamedAsyncSignal):
             raise RuntimeError(
                 'Sync signals can\'t be triggered asynchronously: %s.' %
@@ -176,4 +180,5 @@ class Events(object):
     @classmethod
     def subscribe(cls, event, handler):
         'Subscribes to an event'
+        logger.debug('subscribing %s to %s' % (handler, event))
         event.connect(handler)
