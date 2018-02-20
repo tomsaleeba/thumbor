@@ -58,8 +58,9 @@ class ImageUploadHandler(ImageApiHandler):
             image_id = str(uuid.uuid4().hex)
             self.write_file(image_id, body)
             self.set_status(201)
-            self.set_header('Location', self.location(image_id, filename))
-        Events.trigger(Events.Imaging.after_upload_image, None)
+            location_header_value = self.location(image_id, filename)
+            Events.trigger(Events.Imaging.after_upload_image, None, location_header=location_header_value)
+            self.set_header('Location', location_header_value)
 
     def multipart_form_data(self):
         if 'media' not in self.request.files or not self.request.files['media']:
